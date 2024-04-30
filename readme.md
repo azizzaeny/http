@@ -3,33 +3,11 @@
 
 Translate incomin http request into data strcuture like ring in clojure  
 
-basic http server, with handler accept returning object `{status, headers, body}`
-
 ### Getting started 
-`node` repl 
-
-```js
-
-var evaluate= (...args) => {
-  let [vm=require('vm'), ctx=global, addCtx={console, require, module}] = args;
-  return (res) => {
-    let context = vm.createContext(ctx);
-    return vm.runInContext(res, Object.assign(context, addCtx));
-  }
-}
-
-var addDeps = (url) => fetch(url).then(res => res.text()).then(evaluate());
-
-var deps = {
-  http : "https://cdn.jsdelivr.net/gh/azizzaeny/http/dist/index.js", // to be loaded in  the repl as global vars
-}
-
-addDeps(deps.http);
-
-```
+{TODO: installing }
 
 ### Usage 
-
+basic http server, with handler accept returning object `{status, headers, body}`
 ```js
 
 var mainHandler = (req, res) => ({ status: 200, headers: {}, body: 'hello world'});
@@ -58,6 +36,29 @@ var mainHandler = (req, res) => {
 var server = server || startSever(
   createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
 );
+```
+use in repl
+
+`node` repl 
+
+```js
+
+var evaluate= (...args) => {
+  let [vm=require('vm'), ctx=global, addCtx={console, require, module}] = args;
+  return (res) => {
+    let context = vm.createContext(ctx);
+    return vm.runInContext(res, Object.assign(context, addCtx));
+  }
+}
+
+var addDeps = (url) => fetch(url).then(res => res.text()).then(evaluate());
+
+var deps = {
+  http : "https://cdn.jsdelivr.net/gh/azizzaeny/http/dist/index.js", // to be loaded in  the repl as global vars
+}
+
+addDeps(deps.http);
+
 ```
 
 live action: 
