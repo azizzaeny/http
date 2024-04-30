@@ -1,10 +1,9 @@
 ## @zaeny/http 
-(status: work in progress)  
-
 Translate incomin http request into data strcuture like ring in clojure  
 
 ### Getting started 
 {TODO: installing }
+(status: work in progress)  
 
 ### Usage 
 basic http server, with handler accept returning object `{status, headers, body}`
