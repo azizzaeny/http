@@ -98,4 +98,4 @@ live action:
 ```
 
 ### Related work
-- [Composable -  Collection of functions to solve programming problem](https://github.com/azizzaeny/composable/tree/main)
+- [Composable](https://github.com/azizzaeny/composable/tree/main) - Collection of functions to solve programming problem
