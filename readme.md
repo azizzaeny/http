@@ -2,7 +2,6 @@
 Translate incomin http request into data strcuture like ring in clojure  
 
 ### Getting started 
-{TODO: installing }
 (status: work in progress)  
 
 ### Usage 
@@ -65,6 +64,27 @@ live action:
 
 ### API
 ```js
-
+  createServer,
+  startServer,
+  stopServer,
+  getServer,
+  response,
+  redirect,
+  created,
+  badRequest,
+  notFound,
+  status,
+  header,
+  headers,
+  contentType,
+  cors,
+  isContentType,
+  responseWrite,
+  clientRequest,
+  responseBuffer,
+  responseWith,
+  readFile,
+  findFile,
+  mimeType
 ```
 
