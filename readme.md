@@ -1,5 +1,13 @@
 ## @zaeny/http 
+> Simple HTTP Server in node.js    
+
 Translate incomin http request into data strcuture like ring in clojure  
+Provide basic funcitonal programming utility  creating http server  
+
+- [Geting Started](#getting-started)
+- [Usage](#usage)
+- [API](#api)
+- [Related work](#related-work)
 
 ### Getting started 
 (status: work in progress)  
@@ -35,6 +43,7 @@ var server = server || startSever(
   createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
 );
 ```
+
 use in repl
 
 `node` repl 
@@ -88,3 +97,5 @@ live action:
   mimeType
 ```
 
+### Related work
+- [Composable](https://github.com/azizzaeny/composable/tree/main)
