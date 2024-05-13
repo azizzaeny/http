@@ -16,7 +16,10 @@
     "api",
     "express",
     "fast",
-    "simple"
+    "simple",
+    "clojure",
+    "ring",
+    "utility"
   ],
   "author": "aziz zaeny",
   "license": "ISC",

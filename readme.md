@@ -53,6 +53,21 @@ var server = server || startSever(
 );
 ```
 
+usage with `@zaeny/clojure.core`
+
+``` js
+var {threadFirst, assoc} = require('@zaeny/clojure.core');
+
+var info = (req, res) => response('hello world');
+
+var server = threadFirst(
+  { port: 8081, handler: info },
+  createServer,
+  startServer
+);
+
+```
+
 live action: 
 {todo: demo}
 
