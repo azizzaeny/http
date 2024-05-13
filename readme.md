@@ -84,3 +84,7 @@ live action:
 
 ### Related work
 - [Composable](https://github.com/azizzaeny/composable/tree/main) - Collection of functions to solve programming problem
+
+### Changes
+ - [1.0.0] expose common api dealing with http api
+ 
