@@ -1,4 +1,9 @@
 ## @zaeny/http 
+
+[![npm version](https://img.shields.io/npm/v/@zaeny/http.svg)](https://www.npmjs.com/package/@zaeny/http)
+![npm downloads](https://img.shields.io/npm/dm/@zaeny/http.svg)  
+
+
 > Simple HTTP Server in node.js    
 
 Translate incomin http request into data strcuture like ring in clojure  
@@ -10,16 +15,20 @@ Provide basic funcitonal programming utility  creating http server
 - [Related work](#related-work)
 
 ### Getting started 
-(status: work in progress)  
+
+```sh
+npm i @zaeny/http
+```
 
 ### Usage 
 basic http server, with handler accept returning object `{status, headers, body}`
 ```js
+var { createServer, startServer, response } = require('@zaeny/http');
 
 var mainHandler = (req, res) => ({ status: 200, headers: {}, body: 'hello world'});
-var server = server || startSever(
+var server = server || startServer(
   createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
-);
+);t
 ```
 
 create simple routing
@@ -42,30 +51,6 @@ var mainHandler = (req, res) => {
 var server = server || startSever(
   createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
 );
-```
-
-use in repl
-
-`node` repl 
-
-```js
-
-var evaluate= (...args) => {
-  let [vm=require('vm'), ctx=global, addCtx={console, require, module}] = args;
-  return (res) => {
-    let context = vm.createContext(ctx);
-    return vm.runInContext(res, Object.assign(context, addCtx));
-  }
-}
-
-var addDeps = (url) => fetch(url).then(res => res.text()).then(evaluate());
-
-var deps = {
-  http : "https://cdn.jsdelivr.net/gh/azizzaeny/http/dist/index.js", // to be loaded in  the repl as global vars
-}
-
-addDeps(deps.http);
-
 ```
 
 live action: 
