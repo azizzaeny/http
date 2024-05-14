@@ -121,7 +121,8 @@ var server = threadFirst(
   responseWith,
   readFile,
   findFile,
-  mimeType
+  mimeType,
+  findRoutes  
 ```
 
 ### Related work
