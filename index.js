@@ -1,3 +1,5 @@
+var isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
+var isArray = (value) =>  Array.isArray(value);
 
 var merge = (...args) => {
   let [obj1, obj2] = args;
@@ -47,20 +49,30 @@ var assocIn = (...args) => {
 
 var fs = require('fs');
 
-var responseWrite = (ctx, request, response) => {
-  let alreadySent = request.sent;
-  let dispatch = (ctx) => (
-    response.writeHead(ctx.status, ctx.headers),
-    response.write(ctx.body),
-    response.end());  
-  if(alreadySent) return dispatch(alreadySent);  
-  return (ctx) ? dispatch(ctx) : (null);  
-}
-
 var isContentType = (request, type) => {
   let ctype = getIn(request, ['headers', 'content-type'])
   return ctype ? ctype.includes(type) : false;
 }
+
+var responseWrite = (ctx, request, response) => {
+  let alreadySent = request.sent;
+  let dispatch = (ctx) => {
+    let body    = ctx.body || '';
+    let headers = ctx.headers || {};
+    let status  = ctx.status || 200;
+    if(isObject(body) || isArray(body)){
+      (body = JSON.stringify(ctx.body));
+    }
+    return (
+      response.writeHead(ctx.status, ctx.headers),
+      response.write(body),
+      response.end()
+    );
+  }
+  if(alreadySent) return dispatch(alreadySent);  
+  return (ctx) ? dispatch(ctx) : (null);  
+}
+
 
 var parseJSON = (request, response) => {
   try {
@@ -97,7 +109,8 @@ var parseFormData = (request, response) => {
 var parseRequest = (request, buffer) => {
   (request.$parsed = require('url').parse(request.url, true));
   (request.query = request.$parsed.query);
-  (request.path = request.$parsed.path);
+  (request.params = merge({}, request.query));
+  (request.pathname = request.$parsed.pathname);
   (request.body = Buffer.concat(buffer).toString());
   if(isContentType(request, 'application/json')) parseJSON(request, response);
   if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
@@ -136,16 +149,17 @@ var redirect = (url) => ({status: 302, headers: {"Location": url}, body: ""});
 var created = (url) => ({ status: 201, headers: {"Location": url}, body: ""});
 var badRequest = (body) => ({status: 400, headers: {}, body });
 var notFound = (body) => ({ status: 404, headers:{}, body });
-var status = (code, resp={body:'', headers:{}})  => assoc(resp, "status", status);
-var header = (header, value, resp={status:200, body:''}) => assocIn(resp, ["headers", header], value);
-var headers = (headers, resp={status:200, body:''}) => merge(resp, headers);
-var contentType = (type, resp={status: 200, body:''})=> headers({'Content-Type': type}, resp);
 
-var cors = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization'  
-};
+var status = (code, resp={body:'', headers:{}})  => assoc(resp, "status", status);
+var body   = (str, resp={headers:{}, status: 200}) => assoc(resp, "body", str);
+var header = (header, value, resp={status:200, body:'', headers:{}}) => assocIn(resp, ["headers", header], value);
+var headers = (headers, resp={status:200, body:'', headers:{} }) => merge(resp, headers);
+
+var cors = (origin="*", method='GET, POST, PUT, DELETE, OPTIONS', headers='Content-Type, Authorization') => ({
+  'Access-Control-Allow-Origin': origin,
+  'Access-Control-Allow-Methods': method,
+  'Access-Control-Allow-Headers': headers
+});
 
 var clientRequest = clientRequest || [];
 
@@ -257,6 +271,8 @@ var mimeType = (type) => {
   return mime[type];
 };
 
+var contentType = (type) => ({ headers: {'Content-Type': mimeType(type) }});
+
 var ext = (file) => require('path').extname(file).slice(1);
 
 var isDirectory = (filePath) => fs.statSync(filePath).isDirectory();
@@ -267,6 +283,33 @@ var findFile = (file, resp={status: 200, headers: {'Content-Type': mimeType(ext(
   let indexPath = require('path').join(filePath, 'index.html');
   return merge(resp, { body: readFile(indexPath) });
 }
+
+var findRoutes = (routes, req) => {
+  let found  = Object.entries(routes).find(([key, value])=>{
+    let [method, path] = key.split(' ');
+    let createPathExpr = replace(replace(path, /\/:([\w-]+)/g, '/([$\\w-]+)'), /\//, '\/');
+    let newExpression  = new RegExp(`^${createPathExpr}$`);
+    let normalizePath  = path => (path.length > 1) ? replace(path, /\/$/, '') : path;
+    let requestPath    = normalizePath(req.$parsed.pathname);
+    let paramsMatch    = path.match(/\/:([\w-]+)/g) || [];             
+    let routeFound     =  (method === req.method && requestPath.match(newExpression));    
+    if(routeFound){      
+      let params = reduce((acc, value, index)=>{
+        let key = replace(value, '/:', '');
+        let valueExpr = requestPath.match(newExpression) || [];        
+        let val = valueExpr[index + 1];
+        return merge(acc, {[key]: val});
+      },{}, paramsMatch);      
+      if(req.params && isObject(req.params)){
+        (req.params = merge(req.params, params));
+      }else{
+        (req.params = params);
+      }      
+    }
+    return routeFound;
+  });  
+  return found ? found[1] : null;
+};
 
 module.exports = {
   createServer,
@@ -290,5 +333,7 @@ module.exports = {
   responseWith,
   readFile,
   findFile,
-  mimeType
+  mimeType,
+  findRoutes,
+  body,
 }
