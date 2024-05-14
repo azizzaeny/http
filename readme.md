@@ -68,8 +68,35 @@ var server = threadFirst(
 
 ```
 
-live action: 
-{todo: demo}
+basic routing
+
+```js
+
+var routes = () => ({
+  'GET /api/audio/chapter/:id': 'handleGetAudioByChapter',
+  'GET /asset/:id': 'serveAudioAssets'  
+});
+
+var resolve = {
+  serveAudioAssets,
+  handleGetAudioByChapter
+}
+
+var mainHandler = (req, res) => {
+  let found = findRoutes(routes(), req);
+  if(found && resolve[found]){
+    return resolve[found](req, res);
+  }
+  return notFound('404');
+}
+
+var server = threadFirst(
+  { port: 8081, handler: mainHandler },
+  createServer,
+  startServer
+);
+
+```
 
 ### API
 ```js
@@ -102,4 +129,5 @@ live action:
 
 ### Changes
  - [1.0.0] expose common api dealing with creating http server
+ - [1.0.1] add `findRoutes` utility basic routing `GET /api/audio/:id`, params matching and stringify body request if json
  
