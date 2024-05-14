@@ -121,8 +121,8 @@ var parseRequest = (request, buffer) => {
 var processRequest = (ctx) => (request, response) => {
   let buffer = [];
   request.on('data', chunk => buffer.push(chunk));
-  request.on('end', _  => responseWrite(
-    ctx.handler( parseRequest(request, buffer), response),
+  request.on('end', async _  => responseWrite(
+    await ctx.handler( parseRequest(request, buffer), response),
     request,
     response)) 
 }

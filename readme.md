@@ -131,4 +131,4 @@ var server = threadFirst(
 ### Changes
  - [1.0.0] expose common api dealing with creating http server
  - [1.0.1] add `findRoutes` utility basic routing `GET /api/audio/:id`, params matching and stringify body request if json
- 
+ - [1.0.2] add support for `async` handler 
