@@ -111,7 +111,8 @@ var parseRequest = (request, buffer) => {
   (request.query = request.$parsed.query);
   (request.params = merge({}, request.query));
   (request.pathname = request.$parsed.pathname);
-  (request.body = Buffer.concat(buffer).toString());
+  (request.buffer = buffer);
+  (request.body = Buffer.concat(buffer).toString());  
   if(isContentType(request, 'application/json')) parseJSON(request, response);
   if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
   if(isContentType(request, 'multipart/form-data')) parseFormData(request, response);
@@ -121,10 +122,12 @@ var parseRequest = (request, buffer) => {
 var processRequest = (ctx) => (request, response) => {
   let buffer = [];
   request.on('data', chunk => buffer.push(chunk));
-  request.on('end', async _  => responseWrite(
-    await ctx.handler( parseRequest(request, buffer), response),
-    request,
-    response)) 
+  request.on('end', async _  =>{
+    return responseWrite(
+      await ctx.handler( parseRequest(request, buffer), response),
+      request,
+      response)
+  }) 
 }
 
 var createServer = (ctx, name="server") => merge(
