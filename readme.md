@@ -97,6 +97,15 @@ var server = threadFirst(
 
 ```
 
+testing from repl, createRequest to test the handler
+
+```js
+await handler(createRequest('GET /api/search?query=Aziz'));
+
+// create requst with headers 
+createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}});
+```
+
 ### API
 ```js
   createServer,
@@ -121,7 +130,8 @@ var server = threadFirst(
   readFile,
   findFile,
   mimeType,
-  findRoutes  
+  findRoutes,
+  createRequest
 ```
 
 ### Related work
@@ -133,4 +143,4 @@ var server = threadFirst(
  - [1.0.2] add support for `async` handler 
  - [1.0.3] add support buffer non string request
  - [1.0.4] fix `contentType` should return not headers
- 
+ - [1.0.5] add `createRequest` to mockup request call 

@@ -314,6 +314,18 @@ var findRoutes = (routes, req) => {
   return found ? found[1] : null;
 };
 
+var createRequest = (str, context={}) => {
+  let parts = str.split(' ');
+  let method = first(parts);
+  let path = second(parts);
+  let host = 'http://localhost'; // only added for making up request
+  let url = new URL(path, host);
+  let query = Array.from(url.searchParams.entries()).reduce((acc, [key, value]) => {
+    return (acc[key] = value, acc);
+  }, {});
+  return merge({ method, pathname: url.pathname, query}, context);
+}
+
 module.exports = {
   createServer,
   startServer,
@@ -339,4 +351,5 @@ module.exports = {
   mimeType,
   findRoutes,
   body,
+  createRequest
 }
