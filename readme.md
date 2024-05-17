@@ -133,3 +133,5 @@ var server = threadFirst(
  - [1.0.1] add `findRoutes` utility basic routing `GET /api/audio/:id`, params matching and stringify body request if json
  - [1.0.2] add support for `async` handler 
  - [1.0.3] add support buffer non string request
+ - [1.0.4] fix `contentType` should return not headers
+ 

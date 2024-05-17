@@ -274,7 +274,7 @@ var mimeType = (type) => {
   return mime[type];
 };
 
-var contentType = (type) => ({ headers: {'Content-Type': mimeType(type) }});
+var contentType = (type) => ({'Content-Type': mimeType(type) });
 
 var ext = (file) => require('path').extname(file).slice(1);
 
