@@ -157,7 +157,7 @@ var status = (code, resp={body:'', headers:{}})  => assoc(resp, "status", status
 var body   = (str, resp={headers:{}, status: 200}) => assoc(resp, "body", str);
 var header = (header, value, resp={status:200, body:'', headers:{}}) => assocIn(resp, ["headers", header], value);
 var headers = (headers, resp={status:200, body:'', headers:{} }) => merge(resp, headers);
-var notModified = (body) => ({ status:304 headers:{}, body: body });
+var notModified = (body) => ({ status:304, headers:{}, body: body });
 
 var cors = (origin="*", method='GET, POST, PUT, DELETE, OPTIONS', headers='Content-Type, Authorization') => ({
   'Access-Control-Allow-Origin': origin,
