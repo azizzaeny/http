@@ -131,7 +131,8 @@ createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}})
   findFile,
   mimeType,
   findRoutes,
-  createRequest
+  createRequest,
+  notModified
 ```
 
 ### Related work
@@ -144,3 +145,4 @@ createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}})
  - [1.0.3] add support buffer non string request
  - [1.0.4] fix `contentType` should return not headers
  - [1.0.5] add `createRequest` to mockup request call 
+ - [1.0.6] add `notModified` and fix request parser
