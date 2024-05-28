@@ -76,7 +76,9 @@ var responseWrite = (ctx, request, response) => {
 
 var parseJSON = (request, response) => {
   try {
-    (request.body = JSON.parse(request.body));
+    if(request.body && request.body !== null && request.body !== undefined && request.body !== ""){
+      (request.body = JSON.parse(request.body));
+    }
   }catch(err){
     console.log(err);
     (request.body = {});

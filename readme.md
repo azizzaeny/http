@@ -146,3 +146,4 @@ createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}})
  - [1.0.4] fix `contentType` should return not headers
  - [1.0.5] add `createRequest` to mockup request call 
  - [1.0.6] add `notModified` and fix request parser
+ - [1.0.8] add fix `requst.body` parse if empty dont parse 
