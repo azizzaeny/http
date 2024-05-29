@@ -23,11 +23,17 @@ npm i @zaeny/http
 basic http server, with handler accept returning object `{status, headers, body}`
 ```js
 var { createServer, startServer, response } = require('@zaeny/http');
-
 var mainHandler = (req, res) => ({ status: 200, headers: {}, body: 'hello world'});
-var server = server || startServer(
-  createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
-);t
+var server =  createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
+startServer(server);
+```
+
+basic `response` with utility functions
+
+```js
+var { createServer, startServer, response } = require('@zaeny/http');
+var handler = (req, res) => response('hello world');
+var server =  startServer(createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)}));
 ```
 
 create simple routing
@@ -147,3 +153,5 @@ createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}})
  - [1.0.5] add `createRequest` to mockup request call 
  - [1.0.6] add `notModified` and fix request parser
  - [1.0.8] add fix `requst.body` parse if empty dont parse 
+ - [1.0.9] add `parsing request body`, add improvement processing response
+ 

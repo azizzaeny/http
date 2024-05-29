@@ -73,6 +73,7 @@ var responseWrite = (ctx, request, response) => {
   return (ctx) ? dispatch(ctx) : (null);  
 }
 
+var isRequestBody = (request) =>(request.body && request.body !== null && request.body !== undefined && request.body !== "");
 
 var parseJSON = (request, response) => {
   try {
@@ -86,9 +87,14 @@ var parseJSON = (request, response) => {
   }
 };
 
-var parseUrlencoded = (request, response) => (request.body = merge({}, require('querystring').parse(request.body)));   
+var parseUrlencoded = (request, response) => {
+  if(!isRequestBody(request)) return;    
+  return (request.body = merge({}, require('querystring').parse(request.body)));
+  
+}
 
 var parseFormData = (request, response) => {
+  if(!isRequestBody(request)) return;
   let contentType = getIn(request, ['headers', 'content-type']);  
   let boundary = contentType.split('; ')[1].split('=')[1];
   let parts = request.body.split('--' + boundary);
@@ -114,7 +120,9 @@ var parseRequest = (request, buffer) => {
   (request.params = merge({}, request.query));
   (request.pathname = request.$parsed.pathname);
   (request.buffer = buffer);
-  (request.body = Buffer.concat(buffer).toString());  
+  if(isRequestBody(request)){
+    (request.body = Buffer.concat(buffer).toString());
+  } 
   if(isContentType(request, 'application/json')) parseJSON(request, response);
   if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
   if(isContentType(request, 'multipart/form-data')) parseFormData(request, response);
@@ -124,11 +132,13 @@ var parseRequest = (request, buffer) => {
 var processRequest = (ctx) => (request, response) => {
   let buffer = [];
   request.on('data', chunk => buffer.push(chunk));
-  request.on('end', async _  =>{
-    return responseWrite(
-      await ctx.handler( parseRequest(request, buffer), response),
-      request,
-      response)
+  request.on('end', _  =>{
+    setTimeout(async ()=>{
+      responseWrite(
+        await ctx.handler( parseRequest(request, buffer), response),
+        request,
+        response)
+    }, 0);
   }) 
 }
 
