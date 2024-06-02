@@ -33,6 +33,7 @@ var server =  createServer({
   port: 8081, 
   handler: (req, res) => mainHandler(req, res)
 });
+
 startServer(server);
 
 ```
@@ -53,6 +54,7 @@ var handler = (req, res) => {
   return {status: 200, headers: contentType('json'), body: { is_running: true }};
 }
 
+// contentType, findFile, status, headers, created, notFound, badRequest, etc..
 
 ```
 
