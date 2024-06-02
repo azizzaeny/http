@@ -312,6 +312,7 @@ var mimeType = (type) => {
 var contentType = (type) => ({'Content-Type': mimeType(type) });
 
 var asJson = { headers: contentType('json')};
+var asHtml = { headers: contentType('html')};
 
 var ext = (file) => require('path').extname(file).slice(1);
 
@@ -393,5 +394,6 @@ module.exports = {
   createRequest,
   notModified,
   ext,
-  asJson
+  asJson,
+  asHtml
 }
