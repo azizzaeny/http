@@ -22,21 +22,42 @@ npm i @zaeny/http
 ### Usage 
 basic http server, with handler accept returning object `{status, headers, body}`
 ```js
+
 var { createServer, startServer, response } = require('@zaeny/http');
-var mainHandler = (req, res) => ({ status: 200, headers: {}, body: 'hello world'});
-var server =  createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
+
+var mainHandler = (req, res) => ({ 
+  status: 200, headers: {}, body: 'Hello world'
+});
+
+var server =  createServer({ 
+  port: 8081, 
+  handler: (req, res) => mainHandler(req, res)
+});
 startServer(server);
+
 ```
 
 basic `response` with utility functions
 
 ```js
 var { createServer, startServer, response } = require('@zaeny/http');
+
 var handler = (req, res) => response('hello world');
-var server =  startServer(createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)}));
+
+var server =  startServer(
+  createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
+);
+
+// response json, if body isArray or isObject
+var handler = (req, res) => {
+  return {status: 200, headers: contentType('json'), body: { is_running: true }};
+}
+
+
 ```
 
-create simple routing
+
+create your own simple routing
 
 ```js
 
@@ -67,13 +88,13 @@ var info = (req, res) => response('hello world');
 
 var server = threadFirst(
   { port: 8081, handler: info },
-  createServer,
-  startServer
+  [createServer],
+  [startServer]
 );
 
 ```
 
-basic routing
+advanced routing with params :id with `findRotues`
 
 ```js
 
@@ -103,13 +124,16 @@ var server = threadFirst(
 
 ```
 
-testing from repl, createRequest to test the handler
+testing and debuging from repl, createRequest to test the handler
 
 ```js
-await handler(createRequest('GET /api/search?query=Aziz'));
+
 
 // create requst with headers 
 createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}});
+
+await handler(createRequest('GET /api/search?query=Aziz'));
+
 ```
 
 ### API
@@ -138,7 +162,9 @@ createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}})
   mimeType,
   findRoutes,
   createRequest,
-  notModified
+  notModified,
+  ext,
+  asJson,  
 ```
 
 ### Related work
@@ -154,4 +180,4 @@ createRequest('GET /api/users', {headers: {'Authorization': 'Basic aziz=pass'}})
  - [1.0.6] add `notModified` and fix request parser
  - [1.0.8] add fix `requst.body` parse if empty dont parse 
  - [1.0.9] add `parsing request body`, add improvement processing response
- 
+ - [1.0.10] add parsing body response if non array or object into string

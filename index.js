@@ -1,3 +1,10 @@
+var isFn = (value) =>  typeof value === 'function';
+var isNumber= (value) =>  {
+  return typeof value === 'number' && !Number.isNaN(value);
+}
+var isNil = (x) => x === null;
+var isBoolean = (value) => typeof value === 'boolean';
+
 var isObject = (value) => typeof value === 'object' && value !== null && !Array.isArray(value);
 var isArray = (value) =>  Array.isArray(value);
 
@@ -54,6 +61,12 @@ var isContentType = (request, type) => {
   return ctype ? ctype.includes(type) : false;
 }
 
+var responseEnd = (ctx, body, response) => (
+  response.writeHead(ctx.status, ctx.headers),      
+  response.write(body),
+  response.end()
+);
+
 var responseWrite = (ctx, request, response) => {
   let alreadySent = request.sent;
   let dispatch = (ctx) => {
@@ -62,12 +75,21 @@ var responseWrite = (ctx, request, response) => {
     let status  = ctx.status || 200;
     if(isObject(body) || isArray(body)){
       (body = JSON.stringify(ctx.body));
+      return responseEnd(ctx, body, response);
     }
-    return (
-      response.writeHead(ctx.status, ctx.headers),
-      response.write(body),
-      response.end()
-    );
+    if(isNumber(body)){
+      (body = body.toString());
+      return responseEnd(ctx, body, response);
+    }
+    if(isFn(body) || isNil(body)){
+      (body = '');
+      return responseEnd(ctx, body, response);
+    }
+    if(isBoolean(body)){
+      (body = Boolean(body).toString());
+      return responseEnd(ctx, body, response);
+    } 
+    return responseEnd(ctx, body, response);
   }
   if(alreadySent) return dispatch(alreadySent);  
   return (ctx) ? dispatch(ctx) : (null);  
@@ -131,7 +153,7 @@ var parseRequest = (request, buffer) => {
 
 var processRequest = (ctx) => (request, response) => {
   let buffer = [];
-  request.on('data', chunk => buffer.push(chunk));
+  request.on('data', chunk => (chunk ? buffer.push(chunk) : null));
   request.on('end', _  =>{
     setTimeout(async ()=>{
       responseWrite(
@@ -289,6 +311,8 @@ var mimeType = (type) => {
 
 var contentType = (type) => ({'Content-Type': mimeType(type) });
 
+var asJson = { headers: contentType('json')};
+
 var ext = (file) => require('path').extname(file).slice(1);
 
 var isDirectory = (filePath) => fs.statSync(filePath).isDirectory();
@@ -301,6 +325,8 @@ var findFile = (file, resp={status: 200, headers: {'Content-Type': mimeType(ext(
 }
 
 var findRoutes = (routes, req) => {
+  if(!routes) return null;
+  if(!req || !req.path) return null;
   let found  = Object.entries(routes).find(([key, value])=>{
     let [method, path] = key.split(' ');
     let createPathExpr = replace(replace(path, /\/:([\w-]+)/g, '/([$\\w-]+)'), /\//, '\/');
@@ -365,5 +391,7 @@ module.exports = {
   findRoutes,
   body,
   createRequest,
-  notModified
+  notModified,
+  ext,
+  asJson
 }
