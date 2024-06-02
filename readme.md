@@ -44,15 +44,17 @@ basic `response` with utility functions
 var { createServer, startServer, response } = require('@zaeny/http');
 
 var handler = (req, res) => response('hello world');
-
 var server =  startServer(
-  createServer({ port: 8081, handler: (req, res) => mainHandler(req, res)})
+  createServer({ port: 8081, handler: (req, res) => handler(req, res)})
 );
 
 // response json, if body isArray or isObject
 var handler = (req, res) => {
   return {status: 200, headers: contentType('json'), body: { is_running: true }};
 }
+
+// use response
+var handler = () => response({ is_running: true}, contentType('json'));
 
 // contentType, findFile, status, headers, created, notFound, badRequest, etc..
 
@@ -165,8 +167,7 @@ await handler(createRequest('GET /api/search?query=Aziz'));
   findRoutes,
   createRequest,
   notModified,
-  ext,
-  asJson,  
+  ext
 ```
 
 ### Related work
@@ -182,4 +183,6 @@ await handler(createRequest('GET /api/search?query=Aziz'));
  - [1.0.6] add `notModified` and fix request parser
  - [1.0.8] add fix `requst.body` parse if empty dont parse 
  - [1.0.9] add `parsing request body`, add improvement processing response
- - [1.0.10] add parsing body response if non array or object into string
+ - [1.0.10] add parsing body response if non array or object into string.
+ - [1.0.11] add `response(body, headers, status)` basic construct instead single arguments, fix `findRoutes` bugs
+  

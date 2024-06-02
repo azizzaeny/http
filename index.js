@@ -181,7 +181,7 @@ var getServer = (ctx, name="server") => () => {
   return getIn(ctx, [name]);
 }
 
-var response = (body) => ({ status: 200, body, headers: {}})
+var response = (body='', headers={}, status=200) => ({ status, body, headers });
 var redirect = (url) => ({status: 302, headers: {"Location": url}, body: ""});
 var created = (url) => ({ status: 201, headers: {"Location": url}, body: ""});
 var badRequest = (body) => ({status: 400, headers: {}, body });
@@ -311,8 +311,8 @@ var mimeType = (type) => {
 
 var contentType = (type) => ({'Content-Type': mimeType(type) });
 
-var asJson = { headers: contentType('json')};
-var asHtml = { headers: contentType('html')};
+var headersJson = { headers: contentType('json')};
+var headersHtml = { headers: contentType('html')};
 
 var ext = (file) => require('path').extname(file).slice(1);
 
@@ -327,7 +327,7 @@ var findFile = (file, resp={status: 200, headers: {'Content-Type': mimeType(ext(
 
 var findRoutes = (routes, req) => {
   if(!routes) return null;
-  if(!req || !req.path) return null;
+  if(!req || !req.pathname) return null;
   let found  = Object.entries(routes).find(([key, value])=>{
     let [method, path] = key.split(' ');
     let createPathExpr = replace(replace(path, /\/:([\w-]+)/g, '/([$\\w-]+)'), /\//, '\/');
@@ -394,6 +394,6 @@ module.exports = {
   createRequest,
   notModified,
   ext,
-  asJson,
-  asHtml
+  headersJson,
+  headersHtml
 }
