@@ -96,6 +96,7 @@ var responseWrite = (ctx, request, response) => {
 }
 
 var isRequestBody = (request) =>(request.body && request.body !== null && request.body !== undefined && request.body !== "");
+var isRequestBuffer = (request) =>(request.buffer && request.buffer !== null && request.buffer !== undefined && request.buffer !== "");
 
 var parseJSON = (request, response) => {
   try {
@@ -142,9 +143,9 @@ var parseRequest = (request, buffer) => {
   (request.params = merge({}, request.query));
   (request.pathname = request.$parsed.pathname);
   (request.buffer = buffer);
-  if(isRequestBody(request)){
+  if(isRequestBuffer(request)){
     (request.body = Buffer.concat(buffer).toString());
-  } 
+  }
   if(isContentType(request, 'application/json')) parseJSON(request, response);
   if(isContentType(request, 'application/x-www-form-urlencoded')) parseUrlencoded(request, response);
   if(isContentType(request, 'multipart/form-data')) parseFormData(request, response);
