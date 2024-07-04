@@ -186,3 +186,4 @@ await handler(createRequest('GET /api/search?query=Aziz'));
  - [1.0.10] add parsing body response if non array or object into string.
  - [1.0.11] add `response(body, headers, status)` basic construct instead single arguments, fix `findRoutes` bugs
  - [1.0.12] fix bugs `request.buffer` and `request.body` is empty when content-type `application/json`  
+ - [1.0.13] fix bugs `replace` not found on `findRoutes` 
