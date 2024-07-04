@@ -1,4 +1,16 @@
-function replace(...args) {
+var reduce = (...args) => {
+  let [reducer, initialValue, arr] = args;
+  if(args.length === 1){
+    return coll => reduce(reducer, null, coll);
+  }
+  if (args.length === 2) {
+    return coll => reduce(reducer, initialValueHolder, coll)
+  }
+  return arr.reduce(reducer, initialValue)
+}
+
+
+var replace = (...args) => {
   let [str, pattern, replacement] = args;
   if(args.length === 1) return (pattern, replacement) => str.replace(pattern, replacement);
   return str.replace(new RegExp(pattern, "g"), replacement);
