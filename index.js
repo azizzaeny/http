@@ -1,3 +1,9 @@
+function replace(...args) {
+  let [str, pattern, replacement] = args;
+  if(args.length === 1) return (pattern, replacement) => str.replace(pattern, replacement);
+  return str.replace(new RegExp(pattern, "g"), replacement);
+}
+
 var isFn = (value) =>  typeof value === 'function';
 var isNumber= (value) =>  {
   return typeof value === 'number' && !Number.isNaN(value);
